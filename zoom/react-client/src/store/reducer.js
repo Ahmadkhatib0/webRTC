@@ -13,6 +13,11 @@ const reducer = (state = initState, action) => {
         ...state,
         isRoomHost: action.isRoomHost,
       };
+    case Actions.SET_CONNECT_ONLY_WITH_AUDIO:
+      return {
+        ...state,
+        connectOnlyWithAudio: action.onlyWithAudio,
+      };
     default:
       return state;
   }
