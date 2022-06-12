@@ -10,7 +10,7 @@ const ConnectingButton = ({
     : "join_room_button";
 
   return (
-    <button type="button" className={buttonClass} onClick={onClickHandler}>
+    <button className={buttonClass} onClick={onClickHandler}>
       {buttonText}
     </button>
   );
