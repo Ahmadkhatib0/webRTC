@@ -3,6 +3,7 @@ import React from "react";
 const Input = ({ value, changeHandler, placeholder }) => {
   return (
     <input
+      type="text"
       value={value}
       onChange={changeHandler}
       placeholder={placeholder}
@@ -16,10 +17,10 @@ const JoinRoomInputs = (props) => {
     props;
 
   const handleRoomIdValueChange = (event) => {
-    setRoomIdValue(event.targe.value);
+    setRoomIdValue(event.target.value);
   };
   const handleNameValueChange = (event) => {
-    setNameValue(event.targe.value);
+    setNameValue(event.target.value);
   };
   return (
     <div className="join_room_inputs_container">
