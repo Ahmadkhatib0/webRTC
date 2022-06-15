@@ -31,6 +31,10 @@ io.on("connection", (socket) => {
   socket.on("create-new-room", (data) => {
     createNewRoomHandler(data, socket);
   });
+  socket.on("join-room", (data) => {
+    joinRoomHandler(data, socket);
+  });
+  socket.on("disconnect", () => disconnectHandler(socket));
 });
 
 const createNewRoomHandler = (data, socket) => {
@@ -46,6 +50,36 @@ const createNewRoomHandler = (data, socket) => {
   socket.emit("room-id", { roomId });
 
   socket.emit("room-update", { connectedUsers: newRoom.connectedUsers });
+};
+
+const joinRoomHandler = (data, socket) => {
+  const { identity, roomId } = data;
+  const newUser = { identity, id: uuidv4(), socketId: socket.id, roomId };
+  const room = rooms.find((room) => room.id === roomId);
+  room.connectedUsers = [...room.connectedUsers, newUser];
+
+  socket.join(roomId);
+  connectedUsers = [...connectedUsers, newUser];
+  io.to(roomId).emit("room-update", { connectedUsers: room.connectedUsers });
+};
+
+const disconnectHandler = (socket) => {
+  const user = connectedUsers.find((user) => user.socketId === socket.id);
+  if (user) {
+    //remove this user from the room ;
+    const room = rooms.find((room) => room.id === user.roomId);
+    room.connectedUsers = room.connectedUsers.filter(
+      (user) => user.socketId !== socket.id
+    ); //reassign connectedUsers, by filter out the user that want to disconnect
+
+    //  close the room if count users in room reach zero
+    socket.leave(user.roomId);
+    if (room.connectedUsers.length > 0) {
+      io.to(room.id).emit("room-update", {
+        connectedUsers: room.connectedUsers,
+      });
+    } else rooms = room.filter((r) => r.id !== room.id);
+  }
 };
 
 server.listen(PORT, () => console.log(`server listening on prot ${PORT}`));
