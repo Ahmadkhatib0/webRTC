@@ -4,6 +4,7 @@ const Actions = {
   SET_IDENTITY: "SET_IDENTITY",
   SET_ROOM_ID: "SET_ROOM_ID",
   SET_SHOW_OVERLAY: "SET_SHOW_OVERLAY",
+  SET_PARTICIPANTS: "SET_PARTICIPANTS",
 };
 
 export const setIsRoomHost = (isRoomHost) => {
@@ -30,6 +31,10 @@ export const setRoomId = (roomId) => {
 
 export const setShowOverlay = (showOverlay) => {
   return { type: Actions.SET_SHOW_OVERLAY, showOverlay };
+};
+
+export const setParticipants = (participants) => {
+  return { type: Actions.SET_PARTICIPANTS, participants };
 };
 
 export default Actions;

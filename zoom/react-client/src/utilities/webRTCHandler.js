@@ -1,6 +1,6 @@
 import store from "../store/store";
 import { setShowOverlay } from "../store/actions";
-
+import * as wss from "./wss";
 const defaultConstraints = { audio: true, video: true };
 
 let localStream;
@@ -16,7 +16,7 @@ export const getLocalPreviewAndInitRoomConnection = async (
       localStream = stream;
       showLocalVideoPreview(localStream);
       store.dispatch(setShowOverlay(false));
-      //  isRoomHost ? wws.createNewRoom(identity) : wws.joinRoom(roomId , identity) ;
+      isRoomHost ? wss.createNewRoom(identity) : wss.joinRoom(identity, roomId);
     })
     .catch((error) => {
       console.log("an error occurred when trying to get local stream");

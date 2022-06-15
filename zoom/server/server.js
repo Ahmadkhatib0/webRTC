@@ -1,8 +1,8 @@
 const express = require("express");
 const http = require("http");
-const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
 const twilio = require("twilio");
+const { v4: uuidv4 } = require("uuid");
 
 const PORT = process.env.PORT || 5002;
 const app = express();
@@ -26,5 +26,26 @@ app.get("/api/room-exists/:roomId", (req, res) => {
 const io = require("socket.io")(server, {
   cors: { origin: "*", method: ["GET", "POST"] },
 });
+
+io.on("connection", (socket) => {
+  socket.on("create-new-room", (data) => {
+    createNewRoomHandler(data, socket);
+  });
+});
+
+const createNewRoomHandler = (data, socket) => {
+  const { identity } = data;
+  const roomId = uuidv4();
+  const newUser = { identity, id: uuidv4(), socketId: socket.id, roomId };
+  // push this new connected user to connected users
+  connectedUsers = [...connectedUsers, newUser];
+  const newRoom = { id: roomId, connectedUsers: [newUser] };
+  socket.join(roomId);
+  rooms = [...rooms, newRoom];
+  // emit to client which created that room emit roomId
+  socket.emit("room-id", { roomId });
+
+  socket.emit("room-update", { connectedUsers: newRoom.connectedUsers });
+};
 
 server.listen(PORT, () => console.log(`server listening on prot ${PORT}`));
