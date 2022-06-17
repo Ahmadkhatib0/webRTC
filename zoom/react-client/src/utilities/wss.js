@@ -38,6 +38,10 @@ export const connectWithSocketIOServer = () => {
     const { connUserSocketId } = data;
     webRTCHandler.prepareNewPeerConnection(connUserSocketId, true);
   });
+
+  socket.on("user-disconnected", (data) =>
+    webRTCHandler.removePeerConnection(data)
+  );
 };
 
 export const createNewRoom = (identity) => {

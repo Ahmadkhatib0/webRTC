@@ -2,7 +2,10 @@ import Peer from "simple-peer";
 import store from "../store/store";
 import { setShowOverlay } from "../store/actions";
 import * as wss from "./wss";
-const defaultConstraints = { audio: true, video: true };
+const defaultConstraints = {
+  audio: true,
+  video: { width: "480", height: "360" },
+};
 
 let localStream;
 export const getLocalPreviewAndInitRoomConnection = async (
@@ -55,6 +58,25 @@ export const handleSignalingData = (data) => {
   peers[data.connUserSocketId].signal(data.signal);
 };
 
+export const removePeerConnection = (data) => {
+  const { socketId } = data;
+  const videoContainer = document.getElementById(socketId);
+  const videoElement = document.getElementById(`${socketId}-video`);
+
+  if (videoContainer && videoElement) {
+    const tracks = videoElement.srcObject.getTracks();
+    tracks.forEach((t) => t.stop());
+    videoElement.srcObject = null;
+    videoContainer.removeChild(videoElement);
+    videoContainer.parentNode.removeChild(videoContainer);
+
+    if (peers[socketId]) {
+      peers[socketId].destroy();
+    }
+    delete peers[socketId];
+  }
+};
+
 // ////////////////////////////// UI VIDEOS ///////////////////////////
 const showLocalVideoPreview = (stream) => {
   const videosContainer = document.getElementById("videos_portal");
@@ -82,6 +104,12 @@ const addStream = (stream, connUserSocketId) => {
   videoElement.srcObject = stream;
   videoElement.id = `${connUserSocketId}-video`;
   videoElement.onloadedmetadata = () => videoElement.play();
+
+  videoElement.addEventListener("click", () => {
+    if (videoElement.classList.contains("full_screen"))
+      videoElement.classList.remove("full_screen");
+    else videoElement.classList.add("full_screen");
+  });
   videoContainer.appendChild(videoElement);
   videosContainer.appendChild(videoContainer);
 };
