@@ -35,6 +35,12 @@ io.on("connection", (socket) => {
     joinRoomHandler(data, socket);
   });
   socket.on("disconnect", () => disconnectHandler(socket));
+
+  socket.on("conn-signal", (data) => {
+    signalingHandler(data, socket);
+  });
+
+  socket.on("conn-init", (data) => initializeConnectionHandler(data, socket));
 });
 
 const createNewRoomHandler = (data, socket) => {
@@ -60,6 +66,14 @@ const joinRoomHandler = (data, socket) => {
 
   socket.join(roomId);
   connectedUsers = [...connectedUsers, newUser];
+
+  //emit to all users which are in this room to prepare peer connection
+  room.connectedUsers.forEach((user) => {
+    if (user.socketId !== socket.id) {
+      const data = { connUserSocketId: socket.id };
+      io.to(user.socketId).emit("conn-prepare", data);
+    }
+  });
   io.to(roomId).emit("room-update", { connectedUsers: room.connectedUsers });
 };
 
@@ -80,6 +94,19 @@ const disconnectHandler = (socket) => {
       });
     } else rooms = room.filter((r) => r.id !== room.id);
   }
+};
+
+const signalingHandler = (data, socket) => {
+  const { connUserSocketId, signal } = data;
+  const signalingData = { signal, connUserSocketId: socket.id };
+  io.to(connUserSocketId).emit("conn-signal", signalingData);
+};
+
+// information from clients which are already in room that they've prepared for incoming connection
+const initializeConnectionHandler = (data, socket) => {
+  const { connUserSocketId } = data;
+  const initData = { connUserSocketId: socket.id };
+  io.to(connUserSocketId).emit("conn-init", initData);
 };
 
 server.listen(PORT, () => console.log(`server listening on prot ${PORT}`));
