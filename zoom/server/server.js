@@ -92,7 +92,7 @@ const disconnectHandler = (socket) => {
       io.to(room.id).emit("room-update", {
         connectedUsers: room.connectedUsers,
       });
-    } else rooms = room.filter((r) => r.id !== room.id);
+    } else rooms = rooms.filter((r) => r.id !== room.id);
   }
 };
 
