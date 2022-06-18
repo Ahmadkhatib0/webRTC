@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import shareScreen from "../../resources/images/switchToScreenSharing.svg";
 import LocaleScreenSharingPreview from "./LocaleScreenSharingPreview";
+import * as webRTCHandler from "../../utilities/webRTCHandler";
 
 const constraints = { audio: false, video: true };
 const SwitchToScreenSharingButton = (props) => {
@@ -16,11 +17,13 @@ const SwitchToScreenSharingButton = (props) => {
       }
       if (stream) {
         setScreenSharingStream(stream);
+        webRTCHandler.toggleScreenShare(isScreenSharingActive, stream);
         setIsScreenSharingActive(true);
         // execute here function to switch the video track which we're sending to other users
       }
     } else {
       // switch for video track for camera
+      webRTCHandler.toggleScreenShare(isScreenSharingActive);
       setIsScreenSharingActive(false);
       // stop screen sharing stream ;
       screenSharingStream.getTracks().forEach((t) => t.stop());
