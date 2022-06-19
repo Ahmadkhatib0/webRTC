@@ -1,6 +1,6 @@
 import Peer from "simple-peer";
 import store from "../store/store";
-import { setShowOverlay } from "../store/actions";
+import { setMessages, setShowOverlay } from "../store/actions";
 import * as wss from "./wss";
 const defaultConstraints = {
   audio: true,
@@ -34,12 +34,15 @@ const getConfiguration = () => {
   // stun allow us to get info about our internet connection
   return { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 };
+
+const messengerChannel = "messenger";
 export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
   const configuration = getConfiguration();
   peers[connUserSocketId] = new Peer({
     initiator: isInitiator,
     config: configuration,
     stream: localStream,
+    channelName: messengerChannel,
   });
 
   peers[connUserSocketId].on("signal", (data) => {
@@ -51,6 +54,10 @@ export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
     console.log("new stream came");
     addStream(stream, connUserSocketId);
     streams = [...streams, stream];
+  });
+  peers[connUserSocketId].on("data", (data) => {
+    const messageData = JSON.parse(data);
+    appendNewMessage(messageData);
   });
 };
 
@@ -149,4 +156,23 @@ const switchVideoTracks = (stream) => {
       }
     }
   }
+};
+
+///////////////////////////// Messages Logic /////////////////////////////////
+const appendNewMessage = (messageData) => {
+  const messages = store.getState().messages;
+  store.dispatch(setMessages([...messages, messageData]));
+};
+
+export const sendMessageUsingDataChannel = (messageContent) => {
+  const identity = store.getState().identity;
+  const localMessageData = {
+    content: messageContent,
+    identity,
+    messageCreatedByMe: true,
+  };
+  const messageData = { content: messageContent, identity };
+  appendNewMessage(localMessageData);
+  const stringifiedMessageData = JSON.stringify(messageData);
+  for (let socket_id in peers) peers[socket_id].send(stringifiedMessageData);
 };

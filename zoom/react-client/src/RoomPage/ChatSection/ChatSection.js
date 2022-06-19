@@ -1,9 +1,14 @@
 import React from "react";
+import ChatLabel from "./ChatLabel";
+import Messages from "./Messages";
+import NewMessage from "./NewMessage";
 
 const ChatSection = (props) => {
   return (
     <div className="chat_section_container">
-      <div>chat section</div>
+      <ChatLabel />
+      <Messages />
+      <NewMessage />
     </div>
   );
 };
