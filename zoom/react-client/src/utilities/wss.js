@@ -44,13 +44,13 @@ export const connectWithSocketIOServer = () => {
   );
 };
 
-export const createNewRoom = (identity) => {
-  const data = { identity };
+export const createNewRoom = (identity, onlyAudio) => {
+  const data = { identity, onlyAudio };
   socket.emit("create-new-room", data);
 };
 
-export const joinRoom = (identity, roomId) => {
-  const data = { identity, roomId };
+export const joinRoom = (identity, roomId, onlyAudio) => {
+  const data = { identity, roomId, onlyAudio };
   socket.emit("join-room", data);
 };
 

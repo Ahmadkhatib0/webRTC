@@ -8,13 +8,25 @@ import RoomLabel from "./RoomLabel";
 import Overlay from "../JoinRoomPage/Overlay";
 import "./RoomPage.css";
 
-const RoomPage = ({ roomId, identity, isRoomHost, showOverlay }) => {
+const RoomPage = ({
+  roomId,
+  identity,
+  isRoomHost,
+  showOverlay,
+  connectOnlyWithAudio,
+}) => {
   useEffect(() => {
-    webRTCHandler.getLocalPreviewAndInitRoomConnection(
-      isRoomHost,
-      identity,
-      roomId
-    );
+    if (!isRoomHost && !roomId) {
+      const siteURL = window.location.origin;
+      window.location.href = siteURL;
+    } else {
+      webRTCHandler.getLocalPreviewAndInitRoomConnection(
+        isRoomHost,
+        identity,
+        roomId,
+        connectOnlyWithAudio
+      );
+    }
   }, []);
   return (
     <div className="room_container">

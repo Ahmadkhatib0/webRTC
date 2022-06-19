@@ -7,20 +7,26 @@ const defaultConstraints = {
   video: { width: "480", height: "360" },
 };
 
+const onlyAudioConstraints = { audio: true, video: false };
 let localStream;
 export const getLocalPreviewAndInitRoomConnection = async (
   isRoomHost,
   identity,
-  roomId = null
+  roomId = null,
+  onlyAudio
 ) => {
+  const constraints = onlyAudio ? onlyAudioConstraints : defaultConstraints;
+
   navigator.mediaDevices
-    .getUserMedia(defaultConstraints)
+    .getUserMedia(constraints)
     .then((stream) => {
       console.log("successfully received local stream ");
       localStream = stream;
       showLocalVideoPreview(localStream);
       store.dispatch(setShowOverlay(false));
-      isRoomHost ? wss.createNewRoom(identity) : wss.joinRoom(identity, roomId);
+      isRoomHost
+        ? wss.createNewRoom(identity, onlyAudio)
+        : wss.joinRoom(identity, roomId, onlyAudio);
     })
     .catch((error) => {
       console.log("an error occurred when trying to get local stream");
@@ -97,6 +103,9 @@ const showLocalVideoPreview = (stream) => {
 
   videoElement.onloadedmetadata = () => videoElement.play();
   videoContainer.appendChild(videoElement);
+
+  if (store.getState().connectOnlyWithAudio)
+    videoContainer.appendChild(getAudioOnlyLabel());
   videosContainer.appendChild(videoContainer);
 };
 
@@ -118,7 +127,26 @@ const addStream = (stream, connUserSocketId) => {
     else videoElement.classList.add("full_screen");
   });
   videoContainer.appendChild(videoElement);
+
+  // check if other users connected only with audio ;
+  const participants = store.getState().participants;
+  const participant = participants.find((p) => p.socketId === connUserSocketId);
+  if (participant?.onlyAudio)
+    videoContainer.appendChild(getAudioOnlyLabel(participant.identity));
+
   videosContainer.appendChild(videoContainer);
+};
+
+const getAudioOnlyLabel = (identity = "") => {
+  const labelContainer = document.createElement("div");
+  labelContainer.classList.add("label_only_audio_container");
+
+  const label = document.createElement("p");
+  label.classList.add("label_only_audio_text");
+  label.innerHTML = `Only Audio  ${identity}`;
+
+  labelContainer.appendChild(label);
+  return labelContainer;
 };
 
 ///////////////////////////// Buttons Logic /////////////////////////////////

@@ -44,9 +44,15 @@ io.on("connection", (socket) => {
 });
 
 const createNewRoomHandler = (data, socket) => {
-  const { identity } = data;
+  const { identity, onlyAudio } = data;
   const roomId = uuidv4();
-  const newUser = { identity, id: uuidv4(), socketId: socket.id, roomId };
+  const newUser = {
+    identity,
+    id: uuidv4(),
+    socketId: socket.id,
+    roomId,
+    onlyAudio,
+  };
   // push this new connected user to connected users
   connectedUsers = [...connectedUsers, newUser];
   const newRoom = { id: roomId, connectedUsers: [newUser] };
@@ -59,8 +65,14 @@ const createNewRoomHandler = (data, socket) => {
 };
 
 const joinRoomHandler = (data, socket) => {
-  const { identity, roomId } = data;
-  const newUser = { identity, id: uuidv4(), socketId: socket.id, roomId };
+  const { identity, roomId, onlyAudio } = data;
+  const newUser = {
+    identity,
+    id: uuidv4(),
+    socketId: socket.id,
+    roomId,
+    onlyAudio,
+  };
   const room = rooms.find((room) => room.id === roomId);
   room.connectedUsers = [...room.connectedUsers, newUser];
 
