@@ -23,6 +23,21 @@ app.get("/api/room-exists/:roomId", (req, res) => {
   } else return res.send({ roomExists: false });
 });
 
+app.get("/api/get-turn-credentials", (req, res) => {
+  const accountSid = "AC56694331aafecb2a00b45d6ef871905b";
+  const authToken = "7e41583f106c9889657cbfda8f999ee4";
+  const client = twilio(accountSid, authToken);
+  try {
+    client.tokens.create().then((token) => {
+      res.send({ token });
+    });
+  } catch (error) {
+    console.log("error occurred when fetching turn server credentials");
+    console.log(error);
+    res.send({ token: null });
+  }
+});
+
 const io = require("socket.io")(server, {
   cors: { origin: "*", method: ["GET", "POST"] },
 });

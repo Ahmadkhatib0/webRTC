@@ -2,6 +2,7 @@ import Peer from "simple-peer";
 import store from "../store/store";
 import { setMessages, setShowOverlay } from "../store/actions";
 import * as wss from "./wss";
+import { fetchTURNcredentials, getTurnIceServers } from "./turn";
 const defaultConstraints = {
   audio: true,
   video: { width: "480", height: "360" },
@@ -15,6 +16,7 @@ export const getLocalPreviewAndInitRoomConnection = async (
   roomId = null,
   onlyAudio
 ) => {
+  await fetchTURNcredentials();
   const constraints = onlyAudio ? onlyAudioConstraints : defaultConstraints;
 
   navigator.mediaDevices
@@ -37,8 +39,15 @@ export const getLocalPreviewAndInitRoomConnection = async (
 let peers = {};
 let streams = [];
 const getConfiguration = () => {
-  // stun allow us to get info about our internet connection
-  return { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+  const turnIceservers = getTurnIceServers();
+  if (turnIceservers) {
+    return {
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }, ...turnIceservers],
+    };
+  } else {
+    // stun allow us to get info about our internet connection
+    return { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+  }
 };
 
 const messengerChannel = "messenger";
