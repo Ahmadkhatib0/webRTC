@@ -12,6 +12,7 @@ const NewMessage = ({ activeConversation, identity }) => {
       identity,
       messageContent: message,
     });
+    setMessage("");
   };
   const handleTextChange = (event) => {
     setMessage(event.target.value);

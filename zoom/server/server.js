@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const http = require("http");
 const cors = require("cors");
 const twilio = require("twilio");
@@ -24,8 +25,8 @@ app.get("/api/room-exists/:roomId", (req, res) => {
 });
 
 app.get("/api/get-turn-credentials", (req, res) => {
-  const accountSid = "AC56694331aafecb2a00b45d6ef871905b";
-  const authToken = "7e41583f106c9889657cbfda8f999ee4";
+  const accountSid = process.env.accountSid;
+  const authToken = process.env.authToken;
   const client = twilio(accountSid, authToken);
   try {
     client.tokens.create().then((token) => {

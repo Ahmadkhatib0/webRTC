@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect } from "react";
 
 const SingleMessage = ({ messageContent, isAuthor }) => {
   const messageStyling = isAuthor
@@ -14,15 +14,23 @@ const SingleMessage = ({ messageContent, isAuthor }) => {
   );
 };
 const MessagesContainer = ({ messages }) => {
+  const scrollRef = useRef();
+  useEffect(() => {
+    if (scrollRef) scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="direct_messages_container">
-      {messages.map((message, index) => {
-        <SingleMessage
-          messageContent={message.messageContent}
-          isAuthor={message.isAuthor}
-          key={index}
-        />;
+      {messages.map((message) => {
+        return (
+          <SingleMessage
+            messageContent={message.messageContent}
+            isAuthor={message.isAuthor}
+            key={`${message.messageContent}-${message.identity}`}
+          />
+        );
       })}
+      <div ref={scrollRef}> </div>
     </div>
   );
 };
