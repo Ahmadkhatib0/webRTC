@@ -1,14 +1,20 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import sendMessageButton from "../../../resources/images/sendMessageButton.svg";
+import * as wss from "../../../utilities/wss";
 
 const NewMessage = ({ activeConversation, identity }) => {
   const [message, setMessage] = useState("");
 
   const sendMessage = () => {
-    //
+    wss.sendDirectMessage({
+      receiverSocketId: activeConversation.socketId,
+      identity,
+      messageContent: message,
+    });
   };
   const handleTextChange = (event) => {
-    sendMessage(event.target.value);
+    setMessage(event.target.value);
   };
   const handleKeyPressed = (event) => {
     if (event.key === "Enter") {
@@ -36,4 +42,8 @@ const NewMessage = ({ activeConversation, identity }) => {
   );
 };
 
-export default NewMessage;
+const mapStoreStateToProps = (state) => {
+  return { ...state };
+};
+
+export default connect(mapStoreStateToProps)(NewMessage);

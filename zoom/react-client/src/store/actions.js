@@ -45,8 +45,8 @@ export const setMessages = (messages) => {
   return { type: Actions.SET_MESSAGES, messages };
 };
 
-export const setActiveConversation = (activeConversion) => {
-  return { type: Actions.SET_ACTIVE_CONVERSATION, activeConversion };
+export const setActiveConversation = (activeConversation) => {
+  return { type: Actions.SET_ACTIVE_CONVERSATION, activeConversation };
 };
 
 export const setDirectChatHistory = (history) => {

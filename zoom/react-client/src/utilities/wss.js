@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import store from "../store/store";
-import { setParticipants, setRoomId } from "../store/actions";
+import { setParticipants, setRoomId, setSocketId } from "../store/actions";
 import * as webRTCHandler from "./webRTCHandler";
 const SERVER = "http://localhost:5002";
 
@@ -10,6 +10,7 @@ export const connectWithSocketIOServer = () => {
   socket = io(SERVER);
   socket.on("connect", () => {
     console.log(socket.id);
+    store.dispatch(setSocketId(socket.id));
   });
 
   socket.on("room-id", (data) => {
@@ -42,6 +43,8 @@ export const connectWithSocketIOServer = () => {
   socket.on("user-disconnected", (data) =>
     webRTCHandler.removePeerConnection(data)
   );
+
+  socket.on("direct-message", (data) => console.log(data));
 };
 
 export const createNewRoom = (identity, onlyAudio) => {
@@ -56,4 +59,8 @@ export const joinRoom = (identity, roomId, onlyAudio) => {
 
 export const signalPeerData = (data) => {
   socket.emit("conn-signal", data);
+};
+
+export const sendDirectMessage = (data) => {
+  socket.emit("direct-message", data);
 };
