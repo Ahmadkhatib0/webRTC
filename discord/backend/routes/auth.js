@@ -3,6 +3,7 @@ const router = express.Router();
 const authControllers = require("../controllers/auth/authControllers");
 const joi = require("joi");
 const validators = require("express-joi-validation").createValidator({});
+const auth = require("../middleware/auth");
 
 const registerSchema = joi.object({
   username: joi.string().min(3).max(12).required(),
@@ -25,4 +26,8 @@ router.post(
   authControllers.controllers.postLogin
 );
 
+// test route to verify that middleware is working
+router.get("/test-token", auth, (req, res) => {
+  res.send("request has been passed ");
+});
 module.exports = router;
