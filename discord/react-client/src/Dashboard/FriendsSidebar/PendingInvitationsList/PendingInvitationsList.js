@@ -4,7 +4,7 @@ import PendingInvitationsListItem from "./PendingInvitationsListItem";
 
 const DUMMY_INVITATIONS = [
   { _id: "1", senderId: { username: "test", mail: "test@gma.com" } },
-  { _id: "1", senderId: { username: "ahmad", mail: "ahmad@gma.com" } },
+  { _id: "2", senderId: { username: "ahmad", mail: "ahmad@gma.com" } },
 ];
 
 const MainContainer = styled("div")({

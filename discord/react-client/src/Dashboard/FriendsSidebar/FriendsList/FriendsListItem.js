@@ -3,7 +3,7 @@ import { Button, Typography } from "@mui/material";
 import Avatar from "../../../shared/components/Avatar";
 import OnlineIndicator from "./OnlineIndicator";
 
-const FriendsListItem = ({ username, id, isOnline, key }) => {
+const FriendsListItem = ({ username, isOnline }) => {
   return (
     <Button
       style={{

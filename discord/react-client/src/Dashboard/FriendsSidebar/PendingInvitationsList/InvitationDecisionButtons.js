@@ -13,14 +13,14 @@ const InvitationDecisionButtons = ({
       <IconButton
         style={{ color: "white" }}
         disabled={disabled}
-        onCLick={acceptInvitationHandler}>
+        onClick={acceptInvitationHandler}>
         <CheckIcon />
       </IconButton>
 
       <IconButton
         style={{ color: "white" }}
         disabled={disabled}
-        onCLick={rejectInvitationHandler}>
+        onClick={rejectInvitationHandler}>
         <ClearIcon />
       </IconButton>
     </Box>

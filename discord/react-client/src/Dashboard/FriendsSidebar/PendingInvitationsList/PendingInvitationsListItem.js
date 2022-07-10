@@ -4,7 +4,6 @@ import Avatar from "../../../shared/components/Avatar";
 import InvitationDecisionButtons from "./InvitationDecisionButtons";
 
 const PendingInvitationsListItem = ({
-  key,
   id,
   username,
   mail,
