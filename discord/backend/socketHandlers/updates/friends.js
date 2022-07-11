@@ -11,7 +11,6 @@ const updateFriendsPendingInvitations = async (userId) => {
 
     const receiverList = serverStore.getActiveConnections(userId);
     const io = serverStore.getSocketServerInstance();
-    console.log(`line 14 ${pendingInvitations}`);
     receiverList.forEach((receiverSocketId) => {
       io.to(receiverSocketId).emit("friends-invitations", {
         pendingInvitations: pendingInvitations ? pendingInvitations : [],

@@ -19,7 +19,7 @@ const reducer = (state = initState, action) => {
       return { ...state, onlineUsers: action.onlineUsers };
 
     default:
-      return { state };
+      return state;
   }
 };
 
