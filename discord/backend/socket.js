@@ -14,10 +14,15 @@ const registerSocketServer = (server) => {
   serverStore.setServerSocketInstance(io);
   io.use((socket, next) => authSocket(socket, next));
 
-  io.on("connection", (socket) => {
-    console.log(socket.id);
-    newConnectionHandler(socket, io);
+  const emitOnlineUsers = () => {
+    const onlineUsers = serverStore.getOnlineUsers();
+    io.emit("online-users", { onlineUsers });
+  };
+  setInterval(() => emitOnlineUsers(), 8000);
 
+  io.on("connection", (socket) => {
+    newConnectionHandler(socket, io);
+    emitOnlineUsers();
     socket.on("disconnect", () => {
       disconnectHandler(socket);
     });

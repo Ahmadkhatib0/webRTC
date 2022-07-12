@@ -13,8 +13,6 @@ const addNewConnectedUser = ({ socketId, userId }) => {
 
 const removeConnectUser = (socketId) => {
   if (connectedUsers.has(socketId)) connectedUsers.delete(socketId);
-  console.log("user disconnect");
-  console.log(connectedUsers);
 };
 
 const getActiveConnections = (userId) => {
@@ -25,10 +23,19 @@ const getActiveConnections = (userId) => {
   return activeConnections;
 };
 
+const getOnlineUsers = () => {
+  const onlineUsers = [];
+  connectedUsers.forEach((value, key) => {
+    onlineUsers.push({ socketId: key, userId: value.userId });
+  });
+  return onlineUsers;
+};
+
 module.exports = {
   addNewConnectedUser,
   removeConnectUser,
   getActiveConnections,
   getSocketServerInstance,
   setServerSocketInstance,
+  getOnlineUsers,
 };
