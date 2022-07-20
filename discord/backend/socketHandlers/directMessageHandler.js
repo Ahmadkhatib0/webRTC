@@ -17,16 +17,17 @@ const directMessageHandler = async (socket, data) => {
       participants: { $all: [userId, receiverUserId] },
     });
 
-    chatUpdates.updateChatHistory(conversation._id.toString());
-
     if (conversation) {
       conversation.messages.push(message._id);
       await conversation.save();
+      //perform and update to sender and receiver if is online
+      chatUpdates.updateChatHistory(conversation._id.toString());
     } else {
       const newConversation = await Conversation.create({
         messages: [message._id],
         participants: [userId, receiverUserId],
       });
+      chatUpdates.updateChatHistory(newConversation._id.toString());
     }
   } catch (error) {
     console.log(error);
