@@ -8,6 +8,7 @@ import Sidebar from "./Sidebar/Sidebar";
 import FriendsSidebar from "./FriendsSidebar/FriendsSidebar";
 import Messenger from "./Messanger/Messanger";
 import AppBar from "./AppBar/AppBar";
+import Room from "./Room/Room";
 
 const Wrapper = styled("div")({
   display: "flex",
@@ -15,7 +16,7 @@ const Wrapper = styled("div")({
   width: "100%",
 });
 
-const Dashboard = ({ setUserDetails }) => {
+const Dashboard = ({ setUserDetails, isUserInRoom }) => {
   const userDetails = localStorage.getItem("user");
   useEffect(() => {
     if (!userDetails) logout();
@@ -31,12 +32,17 @@ const Dashboard = ({ setUserDetails }) => {
       <FriendsSidebar />
       <Messenger />
       <AppBar />
+      {isUserInRoom && <Room />}
     </Wrapper>
   );
+};
+
+const mapStoreStateToProps = ({ room }) => {
+  return { ...room };
 };
 
 const mapsStoreActionsToProps = (dispatch) => {
   return { ...getActions(dispatch) };
 };
 
-export default connect(null, mapsStoreActionsToProps)(Dashboard);
+export default connect(mapStoreStateToProps, mapsStoreActionsToProps)(Dashboard);
